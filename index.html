@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    
+    <script src="./vue.min.js"></script>
+    <script src="./node_modules/_vue-router@3.0.7@vue-router/dist/vue-router.js"></script>
+    <script>
+        //地址栏 路由范式
+
+        //(1)xxxx.html#/user/1            params   动态的路由参数
+        //(2)oooo.html#/user?userID=1     query
+
+
+
+
+        //使用
+        // Vue.use(VueRouter);
+        //组件
+        let Child={
+            template:`
+                <div>我是用户1的孩子</div>
+            `,
+        }
+        let UserParams={
+            template:`
+                <div id='1'>
+                    <div id='2'>我是用户1</div>
+                    <router-link to='/home/userP/userPChild'>用户1的孩子</router-link>
+                    <router-view></router-view>
+                </div>
+                
+            `,
+            created(){
+                console.log(this.$route)
+                console.log(this.$router)
+            }
+        }
+        let UserQuery={
+            template:`
+                <div>我是用户2</div>
+            `,
+            created(){
+                console.log(this.$route)
+            } 
+        }
+        let Home={
+            template:`
+                <div>
+                    内容
+                    </br>
+                    <router-link to='/home/userP'>用户1</router-link>
+                    <router-link to='/home/userQ'>用户2</router-link>
+                    
+                    <router-view></router-view>
+                   
+                </div>
+            `,
+        }
+        //创建
+        let router=new VueRouter({  
+            //抛出两个全局组件router-link、router-view(路由组件的出口)  
+            //抛出两个对象 $route(路由信息对象)、$router(VueRouter)挂载到Vue实例化对象
+        //配置
+            routes:[
+                //路由匹配规则
+                {   
+                    //动态路由参数以冒号开头
+                    path:'/home',
+                    name:'home',
+                    component:Home,
+                    children:[
+                        {
+                            path:'userP',      
+                            component:UserParams,
+                            children:[
+                                {
+                                    path:'userPChild',      
+                                    component:Child,
+                                }
+                            ]
+                        },
+                        {
+                            path:'userQ',      
+                            component:UserQuery
+                        }
+                    ]
+                }
+            ]
+        });
+        
+        let App={
+            template:`
+                <div>
+                    <router-link :to="{name:'home'}">用户</router-link>
+                    
+                    <router-view></router-view>
+                </div>
+            `,
+            data:{
+
+            }, 
+            components:{
+                
+            }
+        }
+        new Vue({
+            el:'#app',
+            router,
+            template:`
+                <App/>
+            `,
+            components:{
+                App
+            }
+        })
+        
+    </script>
+</body>
+</html>
